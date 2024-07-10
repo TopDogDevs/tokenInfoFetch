@@ -1,84 +1,85 @@
-I apologize for the confusion. The error you're encountering is due to a mismatch between CommonJS and ES modules. Let's create a new script that avoids these issues. Here's a step-by-step guide to run a simplified version of the script:
+# Token Info Script
 
-1. Create a new directory for this project:
+This script allows you to fetch and display information about a Solana token, including its metadata and balance for a specific wallet. It uses the Metaplex SDK and Solana web3.js library to interact with the Solana blockchain.
+
+## Prerequisites
+
+- Node.js (v14 or later recommended)
+- npm (comes with Node.js)
+
+## Setup
+
+1. Clone this repository or create a new directory for your project.
+
+2. Navigate to your project directory in the terminal.
+
+3. Install the required dependencies by running:
+
    ```
-   mkdir metaplex-token-info
-   cd metaplex-token-info
-   ```
-
-2. Initialize a new Node.js project:
-   ```
-   npm init -y
-   ```
-
-3. Install the required dependencies:
-   ```
-   npm install @solana/web3.js @solana/spl-token
-
-   npm install dotenv
-   ```
-
-4. Create a new file named `tokenInfo.js` and paste the following code:
-
-   ```javascript
-   const { Connection, PublicKey } = require("@solana/web3.js");
-   const { getAssociatedTokenAddress } = require("@solana/spl-token");
-
-   async function fetchTokenInfo(tokenAddress, walletAddress) {
-     // Connect to the Solana network (use your preferred RPC endpoint)
-     const connection = new Connection("https://api.mainnet-beta.solana.com");
-
-     // Convert addresses to PublicKeys
-     const mintPublicKey = new PublicKey(tokenAddress);
-     const walletPublicKey = new PublicKey(walletAddress);
-
-     try {
-       // Check if the token account exists
-       const associatedTokenAddress = await getAssociatedTokenAddress(
-         mintPublicKey,
-         walletPublicKey
-       );
-       const tokenAccountInfo = await connection.getAccountInfo(associatedTokenAddress);
-
-       if (tokenAccountInfo) {
-         console.log("Token account exists for this wallet");
-       } else {
-         console.log("Token account does not exist for this wallet");
-       }
-
-       // Fetch token supply
-       const tokenSupply = await connection.getTokenSupply(mintPublicKey);
-       console.log("Token Supply:", tokenSupply.value);
-
-       // Fetch token account balance if it exists
-       if (tokenAccountInfo) {
-         const balance = await connection.getTokenAccountBalance(associatedTokenAddress);
-         console.log("Token Balance:", balance.value);
-       }
-
-     } catch (error) {
-       console.error("Error fetching token information:", error);
-     }
-   }
-
-   // Usage
-   const tokenAddress = "YOUR_TOKEN_ADDRESS";
-   const walletAddress = "YOUR_WALLET_ADDRESS";
-   fetchTokenInfo(tokenAddress, walletAddress);
+   npm install @metaplex-foundation/umi-bundle-defaults @metaplex-foundation/umi @metaplex-foundation/mpl-token-metadata @solana/spl-token @solana/web3.js dotenv
    ```
 
-5. Replace `YOUR_TOKEN_ADDRESS` with the address of the token you want to check, and `YOUR_WALLET_ADDRESS` with the address of the wallet you want to check.
+4. Create a `.env` file in your project root with the following content:
 
-6. Run the script:
    ```
-   node tokenInfo.js
+   RPC_ENDPOINT=https://api.devnet.solana.com
+   TOKEN_ADDRESS=your_token_address_here
+   WALLET_ADDRESS=your_wallet_address_here
    ```
 
-This script will:
-- Check if an Associated Token Account exists for the given wallet and token.
-- Fetch the token's total supply.
-- If the token account exists, it will also fetch the token balance for the given wallet.
+   Replace `your_token_address_here` and `your_wallet_address_here` with your actual token and wallet addresses.
 
-Note: This script doesn't use Metaplex, which was causing the module compatibility issues. If you specifically need Metaplex functionality, we would need to set up a more complex project structure to handle ES modules correctly.
+5. Create a file named `tokenInfo.js` and copy the script into it.
 
-If you encounter any issues or need to fetch additional information, please let me know, and I'll be happy to help you modify the script accordingly.
+## Usage
+
+Run the script using Node.js:
+
+```
+node tokenInfo.js
+```
+
+### Example Output
+
+```
+Token Metadata:
+  Name: TATA
+  Symbol: TATA
+  URI: https://example.ipfs.dweb.link/metadata.json
+Token Supply: 30000000000000
+Token account exists for this wallet
+Token Balance: 5000000000
+```
+
+## Understanding the Output
+
+- **Token Metadata**: Displays the name, symbol, and URI of the token's metadata.
+- **Token Supply**: Shows the total supply of the token.
+- **Token account exists for this wallet**: Indicates whether the specified wallet has an associated token account for this token.
+- **Token Balance**: If the token account exists, this shows the balance of tokens in the specified wallet.
+
+## Troubleshooting
+
+If you encounter any errors:
+
+1. Ensure all dependencies are correctly installed.
+2. Check that your `.env` file is set up correctly with valid addresses.
+3. Verify that you're connected to the correct Solana network (Mainnet, Devnet, etc.).
+
+## Customization
+
+You can modify the `fetchTokenInfo` function in `tokenInfo.js` to fetch additional information or perform other operations with the token data.
+
+Example: To fetch the token's decimals, add this line after fetching the digital asset:
+
+```javascript
+console.log("Token Decimals:", digitalAsset.mint.decimals);
+```
+
+## Contributing
+
+Feel free to fork this project and submit pull requests with any enhancements.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
